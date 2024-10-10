@@ -33,7 +33,7 @@ jobs:
             path: test-results.xml
     
     docker:
-        runs-on: ubunto-latest
+        runs-on: ubuntu-latest
         steps:
           - name: Echo Hola
             run: echo "Hola"
