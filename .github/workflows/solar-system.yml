@@ -8,30 +8,6 @@ on:
       - 'feature/*'
     
 jobs:
-    unit-testing:
-        name: Unit Testing
-        runs-on: ubuntu-latest
-        steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v4
-
-        - name: Setup NodeJS Version
-          uses: actions/setup-node@v3
-          with:
-            node-version: 20
-    
-        - name: Install Dependencies
-          run: npm install
-    
-        - name: Unit Testing
-          run: npm test
-          
-        - name: Archive Test Result
-          uses: actions/upload-artifact@v3
-          with:
-            name: Mocha-Test-Result
-            path: test-results.xml
-    
     docker:
         runs-on: ubuntu-latest
         steps:
@@ -39,23 +15,17 @@ jobs:
             run: echo "Hola"
 
     dev-deploy:
-        environment: development
+        needs: docker
         runs-on: ubuntu-latest
-        needs: [docker]
+        environment:
+            name: development
         steps:
-          - name: Step 1 - Checkout Repo
-            uses: actions/checkout@v4
-
-          - name: Step 2 - Install kubectl
-            uses: azure/setup-kubectl@v4
+          - uses: actions/checkout@v4
+          - uses: azure/setup-kubectl@v3
             with:
-              version: 'v1.26.0'
-
-          - name: Step 3 - Set Kube Context
-            uses: azure/k8s-set-context@v4
+                version: v1.26.0
+          - uses: azure/k8s-set-context@v3
             with:
-              method: kubeconfig
-              kubeconfig: ${{ secrets.KUBECONFIG }}
-
-          - name: Step 4 - Check Commands
-            run: kubectl version -o yaml
+                method: kubeconfig
+                kubeconfig: '${{ secrets.KUBECONFIG }}'
+          - run: kubectl version --short -o yaml
