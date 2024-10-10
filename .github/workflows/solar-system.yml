@@ -58,4 +58,4 @@ jobs:
               kubeconfig: ${{ secrets.KUBECONFIG }}
 
           - name: Step 4 - Check Commands
-            run: kubectl version --short -o yaml
+            run: kubectl version -o yaml
